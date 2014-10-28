@@ -1,0 +1,29 @@
+{
+    "name": "php-go/php-go",
+    "description": "php-go 框架的核心代码",
+    "type": "library",
+    "require": {
+        "symfony/config": "~2.4",
+        "symfony/yaml": "~2.4",
+        "symfony/http-foundation": "~2.4",
+        "symfony/http-kernel": "~2.4",
+        "symfony/event-dispatcher": "~2.4",
+        "symfony/routing": "~2.4",
+        "twig/twig": "~1.8",
+        "symfony/twig-bridge": "~2.4",
+        "silex/providers": "2.0.*@dev",
+        "silex/api": "2.0.*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "dongww",
+            "email": "dongww@gmail.com"
+        }
+    ]
+}
