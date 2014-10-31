@@ -31,7 +31,7 @@ class BundleAbstract extends Container implements BundleInterface
             $this->setParent($parent);
         }
 
-        if ('' == $name = preg_replace('/[^a-zA-Z0-9_\.-]+/', '', (string) $name)) {
+        if ('' == $name = preg_replace('/[^a-zA-Z0-9_\.-]+/', '', (string)$name)) {
             throw new \InvalidArgumentException('错误的名字，请仔细检查。');
         }
 
@@ -186,10 +186,18 @@ class BundleAbstract extends Container implements BundleInterface
 
     protected function loadRoutesFromConfig()
     {
-        $loader     = $this->getApp()->getRoutesFileLoader();
-        $collection = $loader->load($this->getDir() . '/_config/routes.config.yml');
-        $collection->addOptions(['bundle_name' => $this->getName()]);
-        $this['routes']->addCollection($collection);
+        $routesFile = $this->getDir() . '/_config/routes.config.yml';
+
+        if (file_exists($routesFile)) {
+            $loader     = $this->getApp()->getRoutesFileLoader();
+            $collection = $loader->load($this->getDir() . '/_config/routes.config.yml');
+            $collection->addOptions(['bundle_name' => $this->getName()]);
+            $this['routes']->addCollection($collection);
+
+            if (isset($this['routes_prefix'])) {
+                $this['routes']->addPrefix($this['routes_prefix']);
+            }
+        }
 
         return $this;
     }
@@ -197,11 +205,9 @@ class BundleAbstract extends Container implements BundleInterface
     public function loadBundlesFromConfig()
     {
         $configFile = $this->getDir() . '/_config/bundles.config.php';
-        if (!file_exists($configFile)) {
-            throw new \Exception("配置文件 $configFile 不存在");
+        if (file_exists($configFile)) {
+            $this->addBundles(require_once $configFile);
         }
-
-        $this->addBundles(require_once $configFile);
 
         return $this;
     }
