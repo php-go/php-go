@@ -35,7 +35,7 @@ class ControllerResolver extends BaseControllerResolver
             /** @var \Symfony\Component\Routing\Route $route */
             $route  = $this->app['routes']->get($request->attributes->get('_route'));
             $bundle = $this->app->getSubBundle($route->getOption('bundle_name'));
-            if ($param->getClass() && $param->getClass()->isInstance($bundle)) {
+            if ($bundle && $param->getClass() && $param->getClass()->isInstance($bundle)) {
                 $request->attributes->set($param->getName(), $bundle);
 
                 continue;
