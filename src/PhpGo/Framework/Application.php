@@ -18,15 +18,17 @@ use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\TerminableInterface;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
+
 //twig 注册路径的时候，指定名字空间，或者重写加载器
 class Application extends BundleAbstract implements HttpKernelInterface, TerminableInterface
 {
     use TwigTrait;
-    
+
     protected $routesFileLoader;
 
     public function __construct($name, array $params = [])
@@ -82,7 +84,7 @@ class Application extends BundleAbstract implements HttpKernelInterface, Termina
      */
     public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
-        parent::handle();
+        parent::handle($request, $type, $catch);
 
         $this['routes']->addCollection($this->getRouteCollection(true));
 
@@ -100,11 +102,6 @@ class Application extends BundleAbstract implements HttpKernelInterface, Termina
         $response = $this->handle($request);
         $response->send();
         $this->terminate($request, $response);
-    }
-
-    public function on($eventName, $callback, $priority = 0)
-    {
-        // TODO: Implement on() method.
     }
 
     public function getRoutesFileLoader()

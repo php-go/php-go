@@ -7,14 +7,17 @@
 
 namespace PhpGo\Framework\Core;
 
+use PhpGo\Framework\CallbackResolver;
 use Silex\Api\BootableProviderInterface;
 use PhpGo\Framework\Application;
 use PhpGo\Framework\BundleCollection;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\RouteCollection;
 
-class BundleAbstract extends Container implements BundleInterface
+class BundleAbstract extends Container implements BundleInterface, HttpKernelInterface
 {
     protected $parent = null;
     protected $app;
@@ -168,7 +171,7 @@ class BundleAbstract extends Container implements BundleInterface
         }
     }
 
-    public function handle()
+    public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
         $this->loadParametersFromConfig();
         $this->loadProvidersFromConfig();
@@ -180,7 +183,7 @@ class BundleAbstract extends Container implements BundleInterface
         }
 
         foreach ($this->getSubBundles()->getBundles() as $child) {
-            $child->run();
+            $child->run($request);
         }
     }
 
@@ -256,8 +259,8 @@ class BundleAbstract extends Container implements BundleInterface
         // TODO: Implement on() method.
     }
 
-    public function run()
+    public function run(Request $request = null)
     {
-        $this->handle();
+        $this->handle($request);
     }
 }
